@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Book</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-1px);
+      }
+
+      button {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      main {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 32px;
+        font-weight: 700;
+      }
+
+      /* Modal Styles */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .modal.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        transform: scale(0.7) translateY(-50px);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .modal.show .modal-content {
+        transform: scale(1) translateY(0);
+      }
+
+      .modal-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        animation: iconPop 0.6s ease 0.2s both;
+      }
+
+      .modal-icon.success {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+      }
+
+      .modal-icon.error {
+        background: linear-gradient(135deg, #dc3545, #e74c3c);
+        color: white;
+      }
+
+      .modal-icon.loading {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes iconPop {
+        0% {
+          transform: scale(0) rotate(-180deg);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.2) rotate(0deg);
+        }
+        100% {
+          transform: scale(1) rotate(0deg);
+          opacity: 1;
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .modal-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .modal-message {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.5;
+      }
+
+      .modal-button {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .modal-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      }
+
+      .error {
+        color: #dc3545;
+        margin-top: 15px;
+        padding: 12px;
+        background: rgba(220, 53, 69, 0.1);
+        border-radius: 8px;
+        border-left: 4px solid #dc3545;
+        font-size: 14px;
+      }
+
+      /* Loading animation */
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/messages/send">Send message</a></li>
+          <li><a href="/books">Books</a></li>
+          <li><a href="/books/add">Add Book</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <h1>Edit Book</h1>
+      <form id="editForm">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text" id="title" name="title" required />
+        </div>
+        <div class="form-group">
+          <label for="author">Author</label>
+          <input type="text" id="author" name="author" required />
+        </div>
+        <button type="submit">Update Book</button>
+      </form>
+      <div id="error" class="error"></div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <div id="modalIcon" class="modal-icon"></div>
+        <h3 id="modalTitle" class="modal-title"></h3>
+        <p id="modalMessage" class="modal-message"></p>
+        <button id="modalButton" class="modal-button" onclick="closeModal()">
+          OK
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Get book ID from URL
+      const pathParts = window.location.pathname.split("/");
+      const bookId = pathParts[pathParts.length - 1];
+
+      // Modal functions
+      function showModal(type, title, message, callback = null) {
+        const modal = document.getElementById("modal");
+        const modalIcon = document.getElementById("modalIcon");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalMessage = document.getElementById("modalMessage");
+        const modalButton = document.getElementById("modalButton");
+
+        // Set modal content based on type
+        if (type === "success") {
+          modalIcon.innerHTML = "✓";
+          modalIcon.className = "modal-icon success";
+        } else if (type === "error") {
+          modalIcon.innerHTML = "✕";
+          modalIcon.className = "modal-icon error";
+        } else if (type === "loading") {
+          modalIcon.innerHTML = '<div class="loading-spinner"></div>';
+          modalIcon.className = "modal-icon loading";
+        }
+
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+
+        // Show modal with animation
+        modal.classList.add("show");
+
+        // Handle button click
+        if (callback) {
+          modalButton.onclick = () => {
+            closeModal();
+            callback();
+          };
+        }
+      }
+
+      function closeModal() {
+        const modal = document.getElementById("modal");
+        modal.classList.remove("show");
+      }
+
+      // Fetch book data and populate form
+      async function loadBookData() {
+        try {
+          const response = await fetch(`/books/${bookId}`);
+          if (!response.ok) {
+            throw new Error("Book not found");
+          }
+          const book = await response.json();
+
+          // Populate form fields
+          document.getElementById("title").value = book.title;
+          document.getElementById("author").value = book.author;
+        } catch (error) {
+          showModal("error", "Error", "Error loading book: " + error.message);
+        }
+      }
+
+      // Handle form submission
+      document
+        .getElementById("editForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          // Show loading modal
+          showModal(
+            "loading",
+            "Updating...",
+            "Please wait while we update the book."
+          );
+
+          const formData = new FormData(e.target);
+          const bookData = {
+            title: formData.get("title"),
+            author: formData.get("author"),
+          };
+
+          try {
+            const response = await fetch(`/books/${bookId}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(bookData),
+            });
+
+            if (response.ok) {
+              // Show success modal and redirect
+              showModal(
+                "success",
+                "Success!",
+                "Book updated successfully!",
+                () => {
+                  window.location.href = "/books";
+                }
+              );
+            } else {
+              const errorData = await response.json();
+              showModal(
+                "error",
+                "Error",
+                errorData.message || "Error updating book"
+              );
+            }
+          } catch (error) {
+            showModal(
+              "error",
+              "Error",
+              "Error updating book: " + error.message
+            );
+          }
+        });
+
+      // Close modal when clicking outside
+      document.getElementById("modal").addEventListener("click", (e) => {
+        if (e.target.id === "modal") {
+          closeModal();
+        }
+      });
+
+      // Close modal with Escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeModal();
+        }
+      });
+
+      // Load book data when page loads
+      loadBookData();
+    </script>
+  </body>
+</html>

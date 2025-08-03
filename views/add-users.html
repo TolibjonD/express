@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <h3>Saidy</h3>
+        <ul>
+          <li><a href="/">Home page</a></li>
+          <li><a href="/add-user">Add user</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main class="form">
+      <div>
+        <h1>Add user</h1>
+        <form action="/users" method="POST">
+          <input type="text" name="username" placeholder="Username" />
+          <button type="submit">send</button>
+        </form>
+      </div>
+    </main>
+  </body>
+</html>
